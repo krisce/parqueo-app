@@ -4,8 +4,9 @@ const Login = () => {
 
 return(
 
-<div>
-<h2>este es el login </h2>
+<div className="container">
+    <h2>hola </h2>
+
 
 
 </div>

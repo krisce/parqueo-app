@@ -29,7 +29,8 @@ function App(){
     })
 return(
 <div>
-    {usuario ? < Home correusuario = {usuario.email} /> : <Login/>}
+    {usuario ? < Home correusuario = {usuario.email} /> : <Login
+    />}
 
 
 </div>
