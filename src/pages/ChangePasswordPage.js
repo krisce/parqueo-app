@@ -1,56 +1,49 @@
-import { useState } from 'react';
-import { useAuth } from '../utils/firebase';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { auth } from './firebase';
 
-const ChangePasswordPage = () => {
-  const [oldPassword, setOldPassword] = useState('');
+const ChangePassword = () => {
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const { updatePassword, signOut } = useAuth();
-  const navigate = useNavigate();
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-
     try {
-      // Actualizar la contraseña del usuario
-      await updatePassword(oldPassword, newPassword);
-
-      // Cerrar sesión para que el usuario inicie sesión nuevamente
-      await signOut();
-      navigate('/login');
+      const user = auth.currentUser;
+      await user.reauthenticateWithCredential(auth.EmailAuthProvider.credential(user.email, currentPassword));
+      await user.updatePassword(newPassword);
+      alert('Contraseña actualizada con éxito.');
+      // Redirige al usuario a la página principal o realiza otras acciones
     } catch (error) {
-      console.error('Error al cambiar la contraseña:', error);
+      console.error(error);
+      // Maneja el error de cambio de contraseña
     }
   };
 
   return (
     <div>
-      <h1>Cambio de Contraseña</h1>
+      <h2>Cambiar contraseña</h2>
       <form onSubmit={handleChangePassword}>
-        <div>
-          <label htmlFor="oldPassword">Contraseña Actual:</label>
+        <label>
+          Contraseña actual:
           <input
             type="password"
-            id="oldPassword"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-            required
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
           />
-        </div>
-        <div>
-          <label htmlFor="newPassword">Nueva Contraseña:</label>
+        </label>
+        <label>
+          Nueva contraseña:
           <input
             type="password"
-            id="newPassword"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            required
           />
-        </div>
-        <button type="submit">Cambiar Contraseña</button>
+        </label>
+        <button type="submit">Cambiar contraseña</button>
       </form>
     </div>
   );
 };
 
-export default ChangePasswordPage;
+export default ChangePassword;
+
